@@ -17,9 +17,9 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;background:var(--black);color:white}
-.site-nav{position:fixed;top:0;left:0;right:0;z-index:20;background:rgba(0,0,0,.84);border-bottom:1px solid rgba(232,235,67,.32)}
+.site-nav{position:fixed;top:0;left:0;right:0;z-index:20;background:transparent;border-bottom:2px solid var(--acid)}
 .site-nav nav{min-height:clamp(48px,4.4vw,68px);display:flex;align-items:center;justify-content:flex-end;gap:clamp(18px,3vw,46px);padding:0 4.5%}
-.site-nav a{color:var(--acid);font:clamp(13px,1.25vw,19px) Arial,sans-serif;text-decoration:none;white-space:nowrap}
+.site-nav a{color:var(--acid);font:clamp(13px,1.25vw,19px) Arial,sans-serif;text-decoration:none;text-shadow:0 1px 2px #000;white-space:nowrap}
 .site-nav a:hover,.site-nav a:focus-visible{text-decoration:underline;text-underline-offset:.3em}
 .site-nav a:focus-visible{outline:2px solid var(--acid);outline-offset:5px}
 .panel,.team{scroll-margin-top:clamp(48px,4.4vw,68px)}
