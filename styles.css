@@ -15,14 +15,19 @@
 
 :root{--acid:#e8eb43;--fire:#dc392a;--black:#000;--charcoal:#1a1a16}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:transparent transparent}
+html.is-scrolling{scrollbar-color:var(--acid) transparent}
+html::-webkit-scrollbar{width:8px}
+html::-webkit-scrollbar-track{background:transparent}
+html::-webkit-scrollbar-thumb{background:transparent;border-radius:8px}
+html.is-scrolling::-webkit-scrollbar-thumb,html::-webkit-scrollbar-thumb:active{background:var(--acid)}
 body{margin:0;background:var(--black);color:white}
-.site-nav{position:fixed;top:0;left:0;right:0;z-index:20;background:transparent;border-bottom:2px solid var(--acid)}
-.site-nav nav{min-height:clamp(48px,4.4vw,68px);display:flex;align-items:center;justify-content:flex-end;gap:clamp(18px,3vw,46px);padding:0 4.5%}
-.site-nav a{color:var(--acid);font:clamp(13px,1.25vw,19px) Arial,sans-serif;text-decoration:none;text-shadow:0 1px 2px #000;white-space:nowrap}
+.site-nav{position:fixed;top:0;left:2.4%;right:2.4%;z-index:20;background:transparent}
+.site-nav nav{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--acid)}
+.site-nav a{color:#fff;font:clamp(12px,.75vw,14px) Arial,sans-serif;text-decoration:none;text-shadow:0 1px 3px #000;white-space:nowrap}
 .site-nav a:hover,.site-nav a:focus-visible{text-decoration:underline;text-underline-offset:.3em}
 .site-nav a:focus-visible{outline:2px solid var(--acid);outline-offset:5px}
-.panel,.team{scroll-margin-top:clamp(48px,4.4vw,68px)}
+.panel,.team{scroll-margin-top:70px}
 .panel{position:relative;width:100%;height:56.25vw;overflow:hidden}
 h1,h2,p,blockquote,figure{margin:0}
 .panel-meta{position:absolute;left:1.84%;right:2.35%;bottom:3.1%;display:flex;align-items:end;justify-content:space-between;color:var(--acid);font:1.03vw RobotoHero,Arial,sans-serif;z-index:4}
@@ -64,8 +69,10 @@ h1,h2,p,blockquote,figure{margin:0}
 .site-footer p+p{margin-top:1vw}
 
 @media(max-width:700px){
-  .site-nav nav{justify-content:center;gap:3.5vw;padding:0 3vw}
-  .site-nav a{font-size:clamp(11px,2.8vw,15px)}
+  .site-nav{left:4%;right:4%}
+  .site-nav nav{min-height:52px;gap:2vw}
+  .site-nav a{font-size:clamp(10px,2.6vw,13px)}
+  .panel,.team{scroll-margin-top:52px}
   .panel{height:auto;min-height:100svh;overflow:hidden}
   .panel-meta{left:5%;right:5%;bottom:3%;font-size:2.8vw}
   .hero{min-height:100svh;background-size:auto 100%;background-position:center top}

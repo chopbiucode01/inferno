@@ -86,5 +86,19 @@
       <p>COMM2754 | Digital Media Specialisation 1 | Trimester 3 | 2026</p>
       <p>inferno | Nguyen Nghia Dung | 2026</p>
     </footer>
+    <script>
+      (() => {
+        const root = document.documentElement;
+        let hideTimer;
+        const showScrollbar = () => {
+          root.classList.add('is-scrolling');
+          clearTimeout(hideTimer);
+          hideTimer = setTimeout(() => root.classList.remove('is-scrolling'), 900);
+        };
+        window.addEventListener('scroll', showScrollbar, { passive: true });
+        window.addEventListener('wheel', showScrollbar, { passive: true });
+        window.addEventListener('touchmove', showScrollbar, { passive: true });
+      })();
+    </script>
   </body>
 </html>
