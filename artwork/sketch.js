@@ -31,7 +31,7 @@ function fire(){
   let edge = [];
 
   beginShape()
-  for (x = 0; x<width; x++){
+  for (x = 0; x<=width; x++){
     offsety+=0.008
     y = noise(offsety)*height/3
     let edgeY = y+random(-5,5);
@@ -53,7 +53,7 @@ function fire2(){
   let edge = [];
 
   beginShape()
-  for (x = 0; x<width; x++){
+  for (x = 0; x<=width; x++){
     offsety+=0.005
     y = noise(offsety)*height/3 +150
     let edgeY = y+random(-5,5);
@@ -75,7 +75,7 @@ function fire3(){
   let edge = [];
 
   beginShape()
-  for (x = 0; x<width; x++){
+  for (x = 0; x<=width; x++){
     offsety+=0.005
     y = noise(offsety)*height/3 +450
     let edgeY = y+random(-5,5);
@@ -158,7 +158,7 @@ function drawFireTexture(edge, palette) {
 function ground(){
   fill(0)
   beginShape()
-  for (x = 0; x<width; x++){
+  for (x = 0; x<=width; x++){
     vertex(x,height-160 + random(-7,3) )
   }
   vertex(width,height)
