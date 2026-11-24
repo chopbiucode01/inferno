@@ -1,93 +1,109 @@
-offsety = 0
-fireArray = [150,250]
-let img;
+offsety = 0;
+fireArray = [150, 250];
 let treeImages = [];
+minYchange = 0;
+maxYchange = 35;
+rotStripe = 0;
+ribbonAlpha = 255;
+ribbonStrokeWeight = 3;
 
-//redraw by clicking anywhere on canvas instead of reloading the page everytime
-function mousePressed(){
-  redraw()
+function loadTree(path) {
+  return new Promise((resolve) => {
+    const tree = new Image();
+    tree.onload = () => resolve(tree);
+    tree.src = path;
+  });
+}
+
+function mousePressed() {
+  redraw();
 }
 
 async function setup() {
   createCanvas(windowWidth, windowHeight);
-  noLoop()
-// loading the images
+  noLoop();
+
   treeImages = await Promise.all([
-    loadImage('tree01.png'),
-    loadImage('tree02.png'),
-    loadImage('tree03.png'),
-    loadImage('tree04.png'),
-    loadImage('tree05.png'),
-    loadImage('tree06.png'),
-    loadImage('tree07.png')
+    loadTree("tree01.png"),
+    loadTree("tree02.png"),
+    loadTree("tree03.png"),
+    loadTree("tree04.png"),
+    loadTree("tree05.png"),
+    loadTree("tree06.png"),
+    loadTree("tree07.png"),
   ]);
-  img = treeImages[0];
 }
 
 //I used perlin noise for this function(reference code:https://youtu.be/y7sgcFhk6ZM?si=WcAUiyTOwGN03XbJ)
-function fire(){
-  noStroke()
-  fill(154, 6, 6)
+function fire() {
+  noStroke();
+  fill(154, 6, 6);
   let edge = [];
 
-  beginShape()
-  for (x = 0; x<=width; x++){
-    offsety+=0.008
-    y = noise(offsety)*height/3
-    let edgeY = y+random(-5,5);
+  beginShape();
+  for (let x = 0; x <= width; x++) {
+    offsety += 0.008;
+    let y = (noise(offsety) * height) / 3;
+    let edgeY = y + random(-5, 5);
     edge.push(edgeY);
-    vertex(x,edgeY)
+    vertex(x, edgeY);
   }
-  vertex(width,height)
-  vertex(0,height)
-  endShape(CLOSE)
+  vertex(width, height);
+  vertex(0, height);
+  endShape(CLOSE);
 
   drawFireTexture(edge, [
-    [140, 5, 5], [155, 9, 8], [170, 17, 11]
+    [140, 5, 5],
+    [155, 9, 8],
+    [170, 17, 11],
   ]);
 }
 
-function fire2(){
-  noStroke()
-  fill(196, 34, 13)
+function fire2() {
+  noStroke();
+  fill(196, 34, 13);
   let edge = [];
 
-  beginShape()
-  for (x = 0; x<=width; x++){
-    offsety+=0.005
-    y = noise(offsety)*height/3 +150
-    let edgeY = y+random(-5,5);
+  beginShape();
+  for (let x = 0; x <= width; x++) {
+    offsety += 0.005;
+    let y = (noise(offsety) * height) / 3 + 150;
+    let edgeY = y + random(-5, 5);
     edge.push(edgeY);
-    vertex(x,edgeY)
+    vertex(x, edgeY);
   }
-  vertex(width,height)
-  vertex(0,height)
-  endShape(CLOSE)
+  vertex(width, height);
+  vertex(0, height);
+  endShape(CLOSE);
 
   drawFireTexture(edge, [
-    [181, 25, 10], [195, 36, 15], [204, 45, 22]
+    [181, 25, 10],
+    [195, 36, 15],
+    [234, 9, 9],
   ]);
 }
 
-function fire3(){
-  noStroke()
-  fill(207, 50, 42)
+function fire3() {
+  noStroke();
+  fill(207, 50, 42);
   let edge = [];
 
-  beginShape()
-  for (x = 0; x<=width; x++){
-    offsety+=0.005
-    y = noise(offsety)*height/3 +450
-    let edgeY = y+random(-5,5);
+  beginShape();
+  for (let x = 0; x <= width; x++) {
+    offsety += 0.005;
+    let y = (noise(offsety) * height) / 3 + 350;
+    let edgeY = y + random(-5, 5);
     edge.push(edgeY);
-    vertex(x,edgeY)
+    vertex(x, edgeY);
   }
-  vertex(width,height)
-  vertex(0,height)
-  endShape(CLOSE)
+  vertex(width, height);
+  vertex(0, height);
+  endShape(CLOSE);
 
   drawFireTexture(edge, [
-    [213, 57, 46], [223, 69, 54], [233, 82, 62]
+    [213, 57, 46],
+    [223, 69, 54],
+    [248, 203, 83],
   ]);
 }
 
@@ -96,6 +112,7 @@ function fire3(){
 function drawFireTexture(edge, palette) {
   push();
 
+  noStroke();
   beginClip();
   beginShape();
   for (let px = 0; px < edge.length; px++) {
@@ -106,100 +123,131 @@ function drawFireTexture(edge, palette) {
   endShape(CLOSE);
   endClip();
 
-  const ribbonCount = 24;
-  const spacing = Math.max(8, height * 0.012);
-  const ribbonHeight = spacing * 1.4;
-  const seed = random(10000);
+  // Match curveVertex's control-point behavior in p5.js v2.
+  splineProperty("ends", EXCLUDE);
 
-  for (let band = 0; band < ribbonCount; band++) {
-    const shade = palette[Math.floor(random(palette.length))];
+  const layers = floor(random(3, 30));
+  const span = Math.hypot(width, height);
+  const end = span / 2 + 500;
+  const xStart = -span / 2 - 300;
+  const xEnd = span / 2 + 300;
 
-    fill(shade[0], shade[1], shade[2], 145);
-    stroke(
-      shade[0] - 35,
-      Math.max(0, shade[1] - 12),
-      Math.max(0, shade[2] - 8),
-      55
-    );
-    strokeWeight(1);
+  for (let layer = 0; layer < layers; layer++) {
+    let y1;
 
-    let points = [];
-    for (let point = 0; point <= 8; point++) {
-      const px = Math.min(
-        edge.length - 1,
-        Math.round(point * width / 8)
-      );
-      const wave =
-        (noise(seed + point * 0.37, band * 0.27) - 0.5)
-        * height * 0.035;
-
-      points.push({
-        x: px,
-        y: edge[px] + (band + 0.5) * spacing + wave
-      });
+    if (layer === 0) {
+      y1 = -span / 2 - 300;
+    } else {
+      y1 = -span / 2 + (span / layers) * layer;
     }
 
-    beginShape();
-    for (let point = 0; point < points.length; point++) {
-      splineVertex(points[point].x, points[point].y);
+    let y2 = y1;
+    let y3 = y1;
+    let y4 = y1;
+    let y5 = y1;
+    let y6 = y1;
+
+    const rotLayer = random(PI, HALF_PI);
+    let rotThisStripe = 3;
+
+    // Bound the loop so it cannot run indefinitely.
+    const averageStep = (minYchange + maxYchange) / 2;
+    const maxStripes = Math.ceil(((end - y1) / Math.max(1, averageStep)) * 3);
+
+    for (
+      let stripe = 0;
+      stripe < maxStripes &&
+      y1 < end &&
+      y2 < end &&
+      y3 < end &&
+      y4 < end &&
+      y5 < end &&
+      y6 < end;
+      stripe++
+    ) {
+      y1 += random(minYchange, maxYchange);
+      y2 += random(minYchange, maxYchange);
+      y3 += random(minYchange, maxYchange);
+      y4 += random(minYchange, maxYchange);
+      y5 += random(minYchange, maxYchange);
+      y6 += random(minYchange, maxYchange);
+
+      const shade = palette[floor(random(palette.length))];
+      fill(shade[0], shade[1], shade[2], ribbonAlpha);
+      noStroke();
+      strokeWeight(ribbonStrokeWeight);
+
+      push();
+      translate(width / 2, height / 2);
+      rotThisStripe += rotStripe;
+      rotate(rotThisStripe + rotLayer);
+
+      beginShape();
+      splineVertex(xStart, end);
+      splineVertex(xStart, y1);
+      splineVertex(-span / 2 + span / 5, y2);
+      splineVertex(-span / 2 + (span / 5) * 2, y3);
+      splineVertex(-span / 2 + (span / 5) * 3, y4);
+      splineVertex(-span / 2 + (span / 5) * 4, y5);
+      splineVertex(xEnd, y6);
+      splineVertex(xEnd, end);
+      endShape(CLOSE);
+
+      pop();
     }
-    for (let point = points.length - 1; point >= 0; point--) {
-      splineVertex(
-        points[point].x,
-        points[point].y + ribbonHeight
-      );
-    }
-    endShape(CLOSE);
   }
 
+  splineProperty("ends", INCLUDE);
   pop();
 }
 
-function ground(){
-  fill(0)
-  beginShape()
-  for (x = 0; x<=width; x++){
-    vertex(x,height-160 + random(-7,3) )
+function ground() {
+  fill(0);
+  beginShape();
+  for (let x = 0; x <= width; x++) {
+    vertex(x, height - 160 + random(-7, 3));
   }
-  vertex(width,height)
-  vertex(0,height)
-  endShape(CLOSE)
+  vertex(width, height);
+  vertex(0, height);
+  endShape(CLOSE);
 }
 
 function drawTrees() {
-  const treeSpacing = Math.floor(random(75,85));
-  const treeCount = Math.max(
-    treeImages.length,
-    Math.ceil(width / treeSpacing)
-  );
+  let treeSpacing = Math.floor(random(75, 85));
+  let treeCount = Math.max(treeImages.length, Math.ceil(width / treeSpacing));
 
   let designs = [];
   for (let i = 0; i < treeCount; i++) {
     designs.push(i % treeImages.length);
   }
+
   for (let i = designs.length - 1; i > 0; i--) {
     let j = Math.floor(random(i + 1));
     [designs[i], designs[j]] = [designs[j], designs[i]];
   }
+
   for (let i = 0; i < treeCount; i++) {
     let tree = treeImages[designs[i]];
-    let sx = tree.width * 0.20;
-    let sy = tree.height * 0.10;
-    let sw = tree.width * 0.60;
-    let sh = tree.height * 0.90;
+    let sx = tree.width * 0.2;
+    let sy = tree.height * 0.1;
+    let sw = tree.width * 0.6;
+    let sh = tree.height * 0.9;
     let treeHeight = random(height * 0.18, height * 0.28);
-    let treeWidth = treeHeight * sw / sh;
-    let centerX = (i + random(0.15, 0.85)) * width / treeCount;
+    let treeWidth = (treeHeight * sw) / sh;
+    let centerX = ((i + random(0.15, 0.85)) * width) / treeCount;
     let baseY = height - 150 + random(-8, 8);
 
     for (let pass = -1; pass <= 1; pass++) {
-      image(
+      drawingContext.drawImage(
         tree,
+        sx,
+        sy,
+        sw,
+        sh,
         centerX - treeWidth / 2 + pass * 1.5,
         baseY - treeHeight,
         treeWidth,
-        treeHeight,
-        sx, sy, sw, sh
+        treeHeight
       );
     }
   }
@@ -208,11 +256,11 @@ function drawTrees() {
 function draw() {
   background(241, 223, 186);
 
-  noFill()
+  noFill();
 
-  fire()
-  fire2()
-  fire3()
-  drawTrees()
-  ground()
+  fire();
+  fire2();
+  fire3();
+  drawTrees();
+  ground();
 }
